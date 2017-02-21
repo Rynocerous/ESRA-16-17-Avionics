@@ -7,6 +7,7 @@
 /* Private variables ---------------------------------------------------------*/
 GPIO_InitTypeDef GPIO_InitStructure;
 USART_InitTypeDef USART_InitStructure;
+SPI_InitTypeDef  SPI_InitStructure;
 uint8_t x;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,12 +68,48 @@ void initXBee() {
 	USART_Cmd(USART2, ENABLE);
 }
 
+void initBaro() {
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* Configure SPI3 pins: SCK, MISO and MOSI ---------------------------------*/
+	/* Configure SCK and MOSI pins as Alternate Function Push Pull */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	/* Configure NCS pin as Alternate Function Push Pull */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	/* Configure MISO pin as Input Floating  */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	/* SPI1 configuration ------------------------------------------------------*/
+	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
+	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+	SPI_Init(SPI1, &SPI_InitStructure);
+
+	/* Enable SPI1 */
+	SPI_Cmd(SPI1, ENABLE);
+}
+
 int main(void)
 {
 
 	initGPIO();
 
 	initXBee();
+
+	initBaro();
 
 	while (1)
 	{
