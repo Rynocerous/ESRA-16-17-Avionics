@@ -41,7 +41,10 @@ void printInt(uint32_t num) {
 }
 
 uint8_t SPI_Transaction(SPI_TypeDef* SPIx, uint8_t write) {
-
+	while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) == RESET);
+	SPI_I2S_SendData(SPIx, write);
+	while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
+	return SPI_I2S_ReceiveData(SPIx);
 }
 
 void initGPIO() {
@@ -152,25 +155,10 @@ void initBaro() {
 	/* C1 */
 	GPIOD->BRR = (GPIO_Pin_2);
 
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_C1);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC1 = (SPI_I2S_ReceiveData(SPI3) << 8);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC1 |= SPI_I2S_ReceiveData(SPI3);
+	SPI_Transaction(SPI3, BARO_C1);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroC1 = (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroC1 |= SPI_Transaction(SPI3, BARO_READ);
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
@@ -178,25 +166,10 @@ void initBaro() {
 	/* C2 */
 	GPIOD->BRR = (GPIO_Pin_2);
 
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_C2);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC2 = (SPI_I2S_ReceiveData(SPI3) << 8);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC2 |= SPI_I2S_ReceiveData(SPI3);
+	SPI_Transaction(SPI3, BARO_C2);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroC2 = (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroC2 |= SPI_Transaction(SPI3, BARO_READ);
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
@@ -204,25 +177,10 @@ void initBaro() {
 	/* C3 */
 	GPIOD->BRR = (GPIO_Pin_2);
 
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_C3);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC3 = (SPI_I2S_ReceiveData(SPI3) << 8);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC3 |= SPI_I2S_ReceiveData(SPI3);
+	SPI_Transaction(SPI3, BARO_C3);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroC3 = (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroC3 |= SPI_Transaction(SPI3, BARO_READ);
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
@@ -230,25 +188,10 @@ void initBaro() {
 	/* C4 */
 	GPIOD->BRR = (GPIO_Pin_2);
 
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_C4);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC4 = (SPI_I2S_ReceiveData(SPI3) << 8);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC4 |= SPI_I2S_ReceiveData(SPI3);
+	SPI_Transaction(SPI3, BARO_C4);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroC4 = (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroC4 |= SPI_Transaction(SPI3, BARO_READ);
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
@@ -256,25 +199,10 @@ void initBaro() {
 	/* C5 */
 	GPIOD->BRR = (GPIO_Pin_2);
 
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_C5);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC5 = (SPI_I2S_ReceiveData(SPI3) << 8);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC5 |= SPI_I2S_ReceiveData(SPI3);
+	SPI_Transaction(SPI3, BARO_C5);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroC5 = (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroC5 |= SPI_Transaction(SPI3, BARO_READ);
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
@@ -282,25 +210,10 @@ void initBaro() {
 	/* C6 */
 	GPIOD->BRR = (GPIO_Pin_2);
 
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_C6);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	SPI_I2S_ReceiveData(SPI3);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC6 = (SPI_I2S_ReceiveData(SPI3) << 8);
-
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-	SPI_I2S_SendData(SPI3, BARO_READ);
-	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-	baroC6 |= SPI_I2S_ReceiveData(SPI3);
+	SPI_Transaction(SPI3, BARO_C6);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroC6 = (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroC6 |= SPI_Transaction(SPI3, BARO_READ);
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
@@ -358,11 +271,7 @@ int main(void)
 
 		/* Send conversion command to barometer */
 		GPIOD->BRR |= (GPIO_Pin_2);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-		SPI_I2S_SendData(SPI3, BARO_CONV_PRES);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-		SPI_I2S_ReceiveData(SPI3);
-
+		SPI_Transaction(SPI3, BARO_CONV_PRES);
 		delay(9040);
 		GPIOD->BSRR |= (GPIO_Pin_2);
 
@@ -370,35 +279,15 @@ int main(void)
 
 		GPIOD->BRR |= (GPIO_Pin_2);
 
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-		SPI_I2S_SendData(SPI3, BARO_READ);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-		SPI_I2S_ReceiveData(SPI3);
-
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-		SPI_I2S_SendData(SPI3, BARO_READ);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-		SPI_I2S_ReceiveData(SPI3);
-
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-		SPI_I2S_SendData(SPI3, BARO_READ);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-		pressure = (SPI_I2S_ReceiveData(SPI3) << 16);
-
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-		SPI_I2S_SendData(SPI3, BARO_READ);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-		pressure |= (SPI_I2S_ReceiveData(SPI3) << 8);
-
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
-		SPI_I2S_SendData(SPI3, BARO_READ);
-		while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE) == RESET);
-		pressure |= SPI_I2S_ReceiveData(SPI3);
-
+		SPI_Transaction(SPI3, BARO_READ);
+		SPI_Transaction(SPI3, BARO_READ);
+		baroD1 = (SPI_Transaction(SPI3, BARO_READ) << 16);
+		baroD1 |= (SPI_Transaction(SPI3, BARO_READ) << 8);
+		baroD1 |= SPI_Transaction(SPI3, BARO_READ);
 
 		delay(500);
 		//USART_SendData(USART2, 0x9B);
-		printInt(pressure);
+		printInt(baroD1);
 		GPIOD->BSRR |= (GPIO_Pin_2);
 	}
 }
