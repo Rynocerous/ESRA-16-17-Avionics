@@ -110,22 +110,22 @@ void initBaro() {
 	/* Enable the SPI3 Pins Software Remapping */
 	GPIO_PinRemapConfig(GPIO_Remap_SPI3, ENABLE);
 	/* Configure SCK and MOSI pins as Alternate Function Push Pull */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Pin = BARO_SCK | BARO_MOSI;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	/* Configure NCS pin as Alternate Function Push Pull */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Pin = BARO_NCS;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	/* Configure MISO pin as Input Floating  */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = BARO_MISO;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	/* Set SPI3 NCS */
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 
 	/* SPI3 configuration ------------------------------------------------------*/
 	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
@@ -142,93 +142,93 @@ void initBaro() {
 	SPI_Cmd(SPI3, ENABLE);
 
 	/* Clear SPI3 NCS */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 	/* Send MS5611 reset command */
 	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET);
 	SPI_I2S_SendData(SPI3, BARO_RESET);
 	delay(2800);
 	/* Set SPI3 NCS */
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 
 	/* Read MS5611 EEPROM */
 	/* C1 */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_C1);
 	SPI_Transaction(SPI3, BARO_READ);
 	baroC1 = (SPI_Transaction(SPI3, BARO_READ) << 8);
 	baroC1 |= SPI_Transaction(SPI3, BARO_READ);
 
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 	delay(100);
 
 	/* C2 */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_C2);
 	SPI_Transaction(SPI3, BARO_READ);
 	baroC2 = (SPI_Transaction(SPI3, BARO_READ) << 8);
 	baroC2 |= SPI_Transaction(SPI3, BARO_READ);
 
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 	delay(100);
 
 	/* C3 */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_C3);
 	SPI_Transaction(SPI3, BARO_READ);
 	baroC3 = (SPI_Transaction(SPI3, BARO_READ) << 8);
 	baroC3 |= SPI_Transaction(SPI3, BARO_READ);
 
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 	delay(100);
 
 	/* C4 */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_C4);
 	SPI_Transaction(SPI3, BARO_READ);
 	baroC4 = (SPI_Transaction(SPI3, BARO_READ) << 8);
 	baroC4 |= SPI_Transaction(SPI3, BARO_READ);
 
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 	delay(100);
 
 	/* C5 */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_C5);
 	SPI_Transaction(SPI3, BARO_READ);
 	baroC5 = (SPI_Transaction(SPI3, BARO_READ) << 8);
 	baroC5 |= SPI_Transaction(SPI3, BARO_READ);
 
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 	delay(100);
 
 	/* C6 */
-	GPIOD->BRR = (GPIO_Pin_2);
+	GPIOD->BRR = (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_C6);
 	SPI_Transaction(SPI3, BARO_READ);
 	baroC6 = (SPI_Transaction(SPI3, BARO_READ) << 8);
 	baroC6 |= SPI_Transaction(SPI3, BARO_READ);
 
-	GPIOD->BSRR = (GPIO_Pin_2);
+	GPIOD->BSRR = (BARO_NCS);
 	delay(100);
 }
 
 void getBaro() {
 	/* Send conversion command to barometer */
-	GPIOD->BRR |= (GPIO_Pin_2);
+	GPIOD->BRR |= (BARO_NCS);
 	SPI_Transaction(SPI3, BARO_CONV_PRES);
 	delay(9040);
-	GPIOD->BSRR |= (GPIO_Pin_2);
+	GPIOD->BSRR |= (BARO_NCS);
 
 	delay(1000);
 
 	/* Read raw ADC conversion back */
-	GPIOD->BRR |= (GPIO_Pin_2);
+	GPIOD->BRR |= (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_READ);
 	SPI_Transaction(SPI3, BARO_READ);
@@ -237,20 +237,20 @@ void getBaro() {
 	baroD1 |= SPI_Transaction(SPI3, BARO_READ);
 
 	delay(500);
-	GPIOD->BSRR |= (GPIO_Pin_2);
+	GPIOD->BSRR |= (BARO_NCS);
 }
 
 void getBaroTemp() {
 	/* Send conversion command to barometer */
-	GPIOD->BRR |= (GPIO_Pin_2);
+	GPIOD->BRR |= (BARO_NCS);
 	SPI_Transaction(SPI3, BARO_CONV_TEMP);
 	delay(9040);
-	GPIOD->BSRR |= (GPIO_Pin_2);
+	GPIOD->BSRR |= (BARO_NCS);
 
 	delay(1000);
 
 	/* Read raw ADC conversion back */
-	GPIOD->BRR |= (GPIO_Pin_2);
+	GPIOD->BRR |= (BARO_NCS);
 
 	SPI_Transaction(SPI3, BARO_READ);
 	SPI_Transaction(SPI3, BARO_READ);
@@ -259,7 +259,7 @@ void getBaroTemp() {
 	baroD2 |= SPI_Transaction(SPI3, BARO_READ);
 
 	delay(500);
-	GPIOD->BSRR |= (GPIO_Pin_2);
+	GPIOD->BSRR |= (BARO_NCS);
 }
 
 void calcPressure() {
@@ -274,6 +274,49 @@ void calcPressure() {
 
 	/* Typecasting issues cause negative assignment */
 	baroP &= 0x1FFFF;
+}
+
+void initIMU() {
+	/* PCLK2 = HCLK/2 */
+	RCC_PCLK2Config(RCC_HCLK_Div2);
+
+	/* GPIOA and SPI1 Peripheral clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1, ENABLE);
+
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* Configure SPI1 pins: SCK, MISO and MOSI ---------------------------------*/
+	/* Configure SCK and MOSI pins as Alternate Function Push Pull */
+	GPIO_InitStructure.GPIO_Pin = IMU_SCK | IMU_MOSI;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	/* Configure NCS pin as Alternate Function Push Pull */
+	GPIO_InitStructure.GPIO_Pin = IMU_NCS;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	/* Configure MISO pin as Input Floating  */
+	GPIO_InitStructure.GPIO_Pin = IMU_MISO;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	/* Set SPI1 NCS */
+	GPIOD->BSRR = (IMU_NCS);
+
+	/* SPI1 configuration ------------------------------------------------------*/
+	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+	SPI_Init(SPI1, &SPI_InitStructure);
+
+	/* Enable SPI1 */
+	SPI_Cmd(SPI1, ENABLE);
 }
 
 int main(void)

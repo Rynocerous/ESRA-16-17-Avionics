@@ -16,6 +16,11 @@
 #define LED_PORT		GPIOC
 
 /* Barometer Definitions */
+#define BARO_NCS		GPIO_Pin_2
+#define BARO_SCK		GPIO_Pin_10
+#define BARO_MISO		GPIO_Pin_11
+#define BARO_MOSI		GPIO_Pin_12
+
 #define BARO_RESET 		0x1E
 #define BARO_CONV_PRES	0x48
 #define BARO_CONV_TEMP	0x58
@@ -41,5 +46,11 @@ int32_t baroTEMP;
 int64_t baroOFF;
 int64_t baroSENS;
 int32_t baroP;
+
+/* IMU Defintions */
+#define IMU_NCS			GPIO_Pin_4
+#define IMU_SCK			GPIO_Pin_5
+#define IMU_MISO		GPIO_Pin_6
+#define IMU_MOSI		GPIO_Pin_7
 
 #endif /* MAIN_H_ */
