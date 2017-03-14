@@ -11,7 +11,6 @@ GPIO_InitTypeDef GPIO_InitStructure;
 USART_InitTypeDef USART_InitStructure;
 SPI_InitTypeDef  SPI_InitStructure;
 uint32_t x;
-uint32_t pressure;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -22,11 +21,11 @@ void delay(uint32_t nCount) {
 }
 
 void printInt(uint32_t num) {
-	char buffer[10];
+	char buffer[20];
 	itoa(num, buffer, 10);
 
 	uint8_t i = 0;
-	while (i < 10) {
+	while (i < 20) {
 		if (buffer[i] > 47 && buffer[i] < 58) {
 			USART_SendData(USART2, buffer[i]);
 			delay(200);
@@ -52,10 +51,10 @@ void initGPIO() {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
 	/* Configure LEDs in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin = LED_GREEN | LED_YELLOW | LED_RED | LED_USB;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_Init(LED_PORT, &GPIO_InitStructure);
 }
 
 void initXBee() {
@@ -217,24 +216,64 @@ void initBaro() {
 
 	GPIOD->BSRR = (GPIO_Pin_2);
 	delay(100);
+}
 
-	USART_SendData(USART2, 0x0A);
-	delay(200);
-	USART_SendData(USART2, 0x0D);
+void getBaro() {
+	/* Send conversion command to barometer */
+	GPIOD->BRR |= (GPIO_Pin_2);
+	SPI_Transaction(SPI3, BARO_CONV_PRES);
+	delay(9040);
+	GPIOD->BSRR |= (GPIO_Pin_2);
 
-	printInt(baroC1);
-	printInt(baroC2);
-	printInt(baroC3);
-	printInt(baroC4);
-	printInt(baroC5);
-	printInt(baroC6);
+	delay(1000);
 
-	USART_SendData(USART2, 0x0A);
-	delay(200);
-	USART_SendData(USART2, 0x0D);
+	/* Read raw ADC conversion back */
+	GPIOD->BRR |= (GPIO_Pin_2);
 
-	/* Set SPI3 NCS */
-	GPIOD->BSRR = (GPIO_Pin_2);
+	SPI_Transaction(SPI3, BARO_READ);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroD1 = (SPI_Transaction(SPI3, BARO_READ) << 16);
+	baroD1 |= (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroD1 |= SPI_Transaction(SPI3, BARO_READ);
+
+	delay(500);
+	GPIOD->BSRR |= (GPIO_Pin_2);
+}
+
+void getBaroTemp() {
+	/* Send conversion command to barometer */
+	GPIOD->BRR |= (GPIO_Pin_2);
+	SPI_Transaction(SPI3, BARO_CONV_TEMP);
+	delay(9040);
+	GPIOD->BSRR |= (GPIO_Pin_2);
+
+	delay(1000);
+
+	/* Read raw ADC conversion back */
+	GPIOD->BRR |= (GPIO_Pin_2);
+
+	SPI_Transaction(SPI3, BARO_READ);
+	SPI_Transaction(SPI3, BARO_READ);
+	baroD2 = (SPI_Transaction(SPI3, BARO_READ) << 16);
+	baroD2 |= (SPI_Transaction(SPI3, BARO_READ) << 8);
+	baroD2 |= SPI_Transaction(SPI3, BARO_READ);
+
+	delay(500);
+	GPIOD->BSRR |= (GPIO_Pin_2);
+}
+
+void calcPressure() {
+	/* Calculate temperature */
+	baroDT = baroD2 - baroC5 * 256;
+	baroTEMP = 2000 + baroDT * baroC6 / 8388608;
+
+	/* Calculate temperature compensated pressure */
+	baroOFF = (int64_t) (baroC2 * 65536 + baroC4 * baroDT / 128);
+	baroSENS = (int64_t) (baroC1 * 32768 + baroC3 * baroDT / 256);
+	baroP = (baroD1 * baroSENS / 2097152 - baroOFF) / 32768;
+
+	/* Typecasting issues cause negative assignment */
+	baroP &= 0x1FFFF;
 }
 
 int main(void)
@@ -249,12 +288,12 @@ int main(void)
 	while (1)
 	{
 		/* Set PC0 and PC2 */
-		GPIOC->BSRR = 0x00000001;
-		GPIOC->BRR  = 0x00000004;
+		GPIOC->BSRR = LED_GREEN;
+		GPIOC->BRR  = LED_RED;
 		delay(100000);
 		/* Set PC1 and PC3 */
-		GPIOC->BSRR = 0x00000004;
-		GPIOC->BRR  = 0x00000001;
+		GPIOC->BSRR = LED_RED;
+		GPIOC->BRR  = LED_GREEN;
 		//delay(500000);
 
 		/* Loop until the USART2 Receive Data Register is not empty */
@@ -269,26 +308,11 @@ int main(void)
 //		delay(200);
 //		USART_SendData(USART2, 0x0D);
 
-		/* Send conversion command to barometer */
-		GPIOD->BRR |= (GPIO_Pin_2);
-		SPI_Transaction(SPI3, BARO_CONV_PRES);
-		delay(9040);
-		GPIOD->BSRR |= (GPIO_Pin_2);
 
-		delay(1000);
-
-		GPIOD->BRR |= (GPIO_Pin_2);
-
-		SPI_Transaction(SPI3, BARO_READ);
-		SPI_Transaction(SPI3, BARO_READ);
-		baroD1 = (SPI_Transaction(SPI3, BARO_READ) << 16);
-		baroD1 |= (SPI_Transaction(SPI3, BARO_READ) << 8);
-		baroD1 |= SPI_Transaction(SPI3, BARO_READ);
-
-		delay(500);
-		//USART_SendData(USART2, 0x9B);
-		printInt(baroD1);
-		GPIOD->BSRR |= (GPIO_Pin_2);
+		getBaro();
+		getBaroTemp();
+		calcPressure();
+		printInt(baroP);
 	}
 }
 

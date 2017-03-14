@@ -9,13 +9,13 @@
 #define MAIN_H_
 
 /* LED Definitions */
-#define LED_GREEN		GPIO_Pin_0
-#define LED_YELLOW 		GPIO_Pin_1
-#define LED_RED 		GPIO_Pin_2
-#define LED_USB 		GPIO_Pin_3
+#define LED_GREEN		GPIO_Pin_3
+#define LED_YELLOW 		GPIO_Pin_2
+#define LED_RED 		GPIO_Pin_1
+#define LED_USB 		GPIO_Pin_0
 #define LED_PORT		GPIOC
 
-/* Barometer Defines */
+/* Barometer Definitions */
 #define BARO_RESET 		0x1E
 #define BARO_CONV_PRES	0x48
 #define BARO_CONV_TEMP	0x58
