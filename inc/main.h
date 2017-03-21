@@ -53,4 +53,7 @@ int32_t baroP;
 #define IMU_MISO		GPIO_Pin_6
 #define IMU_MOSI		GPIO_Pin_7
 
+#define IMU_READ		0x80
+#define IMU_WRITE		0x7F
+
 #endif /* MAIN_H_ */
