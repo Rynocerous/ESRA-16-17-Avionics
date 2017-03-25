@@ -1,4 +1,4 @@
-src/main.o: ../src/main.c \
+src/radio.o: ../src/radio.c \
  C:/Users/Ryan/workspace/avionics/CMSIS/device/stm32f10x.h \
  C:/Users/Ryan/workspace/avionics/CMSIS/core/core_cm3.h \
  C:/Users/Ryan/workspace/avionics/CMSIS/device/system_stm32f10x.h \
@@ -27,10 +27,7 @@ src/main.o: ../src/main.c \
  C:/Users/Ryan/workspace/avionics/StdPeriph_Driver/inc/stm32f10x_wwdg.h \
  C:/Users/Ryan/workspace/avionics/StdPeriph_Driver/inc/misc.h \
  C:/Users/Ryan/workspace/avionics/inc/main.h \
- C:/Users/Ryan/workspace/avionics/inc/led.h \
- C:/Users/Ryan/workspace/avionics/inc/radio.h \
- C:/Users/Ryan/workspace/avionics/inc/baro.h \
- C:/Users/Ryan/workspace/avionics/inc/imu.h
+ C:/Users/Ryan/workspace/avionics/inc/radio.h
 
 C:/Users/Ryan/workspace/avionics/CMSIS/device/stm32f10x.h:
 
@@ -88,10 +85,4 @@ C:/Users/Ryan/workspace/avionics/StdPeriph_Driver/inc/misc.h:
 
 C:/Users/Ryan/workspace/avionics/inc/main.h:
 
-C:/Users/Ryan/workspace/avionics/inc/led.h:
-
 C:/Users/Ryan/workspace/avionics/inc/radio.h:
-
-C:/Users/Ryan/workspace/avionics/inc/baro.h:
-
-C:/Users/Ryan/workspace/avionics/inc/imu.h:

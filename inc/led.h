@@ -15,7 +15,7 @@
 #define LED_USB 		GPIO_Pin_0
 #define LED_PORT		GPIOC
 
-/* Private Variables */
+/* Public Variables */
 GPIO_InitTypeDef GPIO_InitStructure;
 
 /* Function Prototypes */
