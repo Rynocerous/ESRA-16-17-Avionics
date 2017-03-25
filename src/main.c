@@ -2,62 +2,23 @@
 #include "stm32f10x.h"
 #include "stdlib.h"
 #include "main.h"
+#include "led.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-GPIO_InitTypeDef GPIO_InitStructure;
-USART_InitTypeDef USART_InitStructure;
-SPI_InitTypeDef  SPI_InitStructure;
 uint32_t x;
 uint16_t data;
 uint8_t mode = 'f';
-uint16_t BARO_OFFSET = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-void delay(uint32_t nCount) {
-	while (nCount > 0) {
-			nCount--;
-	}
-}
-
-void printInt(uint32_t num) {
-	char buffer[10];
-	itoa(num, buffer, 10);
-
-	uint8_t i = 0;
-	while (i < 10) {
-		if (buffer[i] > 47 && buffer[i] < 58) {
-			USART_SendData(USART2, buffer[i]);
-			delay(2400);
-		}
-		i++;
-	}
-
-	// Finish with \n
-	USART_SendData(USART2, 0x0A);
-	delay(2400);
-	USART_SendData(USART2, 0x0D);
-}
-
 uint8_t SPI_Transaction(SPI_TypeDef* SPIx, uint8_t write) {
 	while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) == RESET);
 	SPI_I2S_SendData(SPIx, write);
 	while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
 	return (uint8_t) SPI_I2S_ReceiveData(SPIx);
-}
-
-void initGPIO() {
-	/* GPIOC Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-
-	/* Configure LEDs in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = LED_GREEN | LED_YELLOW | LED_RED | LED_USB;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(LED_PORT, &GPIO_InitStructure);
 }
 
 void initXBee() {
@@ -274,7 +235,6 @@ void calcPressure() {
 	baroOFF = (int64_t) (baroC2 * 65536 + baroC4 * baroDT / 128);
 	baroSENS = (int64_t) (baroC1 * 32768 + baroC3 * baroDT / 256);
 	baroP = (baroD1 * baroSENS / 2097152 - baroOFF) / 32768;
-	baroP += BARO_OFFSET;
 
 	/* Typecasting issues cause negative assignment */
 	baroP &= 0x1FFFF;
@@ -350,35 +310,20 @@ void initIMU() {
 int main(void)
 {
 
-	initGPIO();
-
+	initLED();
 	initXBee();
-
 	initBaro();
-
 	initIMU();
 
 	while (1)
 	{
-		/* Set PC0 and PC2 */
-		GPIOC->BSRR = LED_GREEN;
-		GPIOC->BRR  = LED_RED;
+		/* Blink LED for every loop */
+		toggleLED(LED_GREEN);
 		delay(1000000);
-		/* Set PC1 and PC3 */
-		GPIOC->BSRR = LED_RED;
-		GPIOC->BRR  = LED_GREEN;
+		toggleLED(LED_GREEN);
 
 //		if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
 //			mode = USART_ReceiveData(USART2);
-//		}
-//
-//		if (mode == 'p') {
-//			BARO_OFFSET += 10;
-//			mode = 'f';
-//		}
-//		if (mode == 'm') {
-//			BARO_OFFSET -= 10;
-//			mode = 'f';
 //		}
 //		delay(100000);
 
@@ -388,84 +333,85 @@ int main(void)
 
 		/* Send received data back out on USART2 */
 		//USART_SendData(USART2, x);
-//		x++;
-//		printInt(x);
-//		USART_SendData(USART2, 0x0A);
-//		delay(200);
-//		USART_SendData(USART2, 0x0D);
+		x++;
+		printInt(x);
+		USART_SendData(USART2, 0x0A);
+		delay(200);
+		USART_SendData(USART2, 0x0D);
 
-
+		/* BAROMETER */
 //		getBaro();
 //		getBaroTemp();
 //		calcPressure();
 //		printInt(baroP);
 
-		USART_SendData(USART2, 0x58);
-		delay(2400);
-		USART_SendData(USART2, 0x3A);
-		delay(2400);
-		USART_SendData(USART2, 0x20);
-		delay(2400);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 59 | 0x80);
-		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 60 | 0x80);
-		data |= SPI_Transaction(IMU_SPI, 0x00);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		printInt(data);
-
-		USART_SendData(USART2, 0x59);
-		delay(2400);
-		USART_SendData(USART2, 0x3A);
-		delay(2400);
-		USART_SendData(USART2, 0x20);
-		delay(2400);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 61 | 0x80);
-		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 62 | 0x80);
-		data |= SPI_Transaction(IMU_SPI, 0x00);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		printInt(data);
-
-		USART_SendData(USART2, 0x5A);
-		delay(2400);
-		USART_SendData(USART2, 0x3A);
-		delay(2400);
-		USART_SendData(USART2, 0x20);
-		delay(2400);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 63 | 0x80);
-		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 64 | 0x80);
-		data |= SPI_Transaction(IMU_SPI, 0x00);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		printInt(data);
-
-		USART_SendData(USART2, 0x0A);
-		delay(2400);
-		USART_SendData(USART2, 0x0D);
+		/* XYZ ACCELERATIONS */
+//		USART_SendData(USART2, 0x58);
+//		delay(2400);
+//		USART_SendData(USART2, 0x3A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x20);
+//		delay(2400);
+//
+//		GPIOA->BRR |= IMU_NCS;
+//		SPI_Transaction(IMU_SPI, 59 | 0x80);
+//		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+//		GPIOA->BSRR |= IMU_NCS;
+//		delay(100);
+//
+//		GPIOA->BRR |= IMU_NCS;
+//		SPI_Transaction(IMU_SPI, 60 | 0x80);
+//		data |= SPI_Transaction(IMU_SPI, 0x00);
+//		GPIOA->BSRR |= IMU_NCS;
+//		delay(100);
+//
+//		printInt(data);
+//
+//		USART_SendData(USART2, 0x59);
+//		delay(2400);
+//		USART_SendData(USART2, 0x3A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x20);
+//		delay(2400);
+//
+//		GPIOA->BRR |= IMU_NCS;
+//		SPI_Transaction(IMU_SPI, 61 | 0x80);
+//		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+//		GPIOA->BSRR |= IMU_NCS;
+//		delay(100);
+//
+//		GPIOA->BRR |= IMU_NCS;
+//		SPI_Transaction(IMU_SPI, 62 | 0x80);
+//		data |= SPI_Transaction(IMU_SPI, 0x00);
+//		GPIOA->BSRR |= IMU_NCS;
+//		delay(100);
+//
+//		printInt(data);
+//
+//		USART_SendData(USART2, 0x5A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x3A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x20);
+//		delay(2400);
+//
+//		GPIOA->BRR |= IMU_NCS;
+//		SPI_Transaction(IMU_SPI, 63 | 0x80);
+//		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+//		GPIOA->BSRR |= IMU_NCS;
+//		delay(100);
+//
+//		GPIOA->BRR |= IMU_NCS;
+//		SPI_Transaction(IMU_SPI, 64 | 0x80);
+//		data |= SPI_Transaction(IMU_SPI, 0x00);
+//		GPIOA->BSRR |= IMU_NCS;
+//		delay(100);
+//
+//		printInt(data);
+//
+//		USART_SendData(USART2, 0x0A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x0D);
 
 
 //		/* CS TEAM INTEGRATION TEST */
@@ -676,6 +622,31 @@ int main(void)
 //			delay(2400);
 //		}
 	}
+}
+
+void delay(uint32_t nCount) {
+	while (nCount > 0) {
+			nCount--;
+	}
+}
+
+void printInt(uint32_t num) {
+	char buffer[10];
+	itoa(num, buffer, 10);
+
+	uint8_t i = 0;
+	while (i < 10) {
+		if (buffer[i] > 47 && buffer[i] < 58) {
+			USART_SendData(USART2, buffer[i]);
+			delay(2400);
+		}
+		i++;
+	}
+
+	// Finish with \n
+	USART_SendData(USART2, 0x0A);
+	delay(2400);
+	USART_SendData(USART2, 0x0D);
 }
 
 #ifdef  USE_FULL_ASSERT

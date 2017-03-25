@@ -2,18 +2,15 @@
  * main.h
  *
  *  Created on: Mar 10, 2017
- *      Author: Ryan
+ *      Author: Ryan Domres
  */
 
 #ifndef MAIN_H_
 #define MAIN_H_
 
-/* LED Definitions */
-#define LED_GREEN		GPIO_Pin_3
-#define LED_YELLOW 		GPIO_Pin_2
-#define LED_RED 		GPIO_Pin_1
-#define LED_USB 		GPIO_Pin_0
-#define LED_PORT		GPIOC
+/* Peripheral Init Structures */
+USART_InitTypeDef USART_InitStructure;
+SPI_InitTypeDef  SPI_InitStructure;
 
 /* Barometer Definitions */
 #define BARO_NCS		GPIO_Pin_2
@@ -56,5 +53,9 @@ int32_t baroP;
 
 #define IMU_READ		0x80
 #define IMU_WRITE		0x7F
+
+/* Function Prototypes */
+void delay(uint32_t);
+void printInt(uint32_t);
 
 #endif /* MAIN_H_ */
