@@ -32,7 +32,7 @@ endif
 all: avionics.elf
 
 # Tool invocations
-avionics.elf: $(OBJS) $(USER_OBJS)
+avionics.elf: $(OBJS) $(USER_OBJS) C:\Users\Ryan\workspace\avionics\LinkerScript.ld
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
 	arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -T"C:\Users\Ryan\workspace\avionics\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "avionics.elf" @"objects.list" $(USER_OBJS) $(LIBS)

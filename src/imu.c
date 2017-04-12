@@ -74,4 +74,108 @@ void initIMU() {
 	SPI_Transaction(IMU_SPI, PWR_MGMT_1);
 	SPI_Transaction(IMU_SPI, 0x01);
 	IMU_PORT->BSRR |= IMU_NCS;
+
+	// Set gyro DLPF to ~100Hz bandwidth
+	IMU_PORT->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, CONFIG);
+	SPI_Transaction(IMU_SPI, 0x02);
+	IMU_PORT->BSRR |= IMU_NCS;
+
+	// Set gyro full scale to +/- 2000 DPS
+	IMU_PORT->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_CONFIG);
+	SPI_Transaction(IMU_SPI, 0x18);
+	IMU_PORT->BSRR |= IMU_NCS;
+
+	// Set accelerometer full scale to +/- 16g
+	IMU_PORT->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_CONFIG);
+	SPI_Transaction(IMU_SPI, 0x18);
+	IMU_PORT->BSRR |= IMU_NCS;
+
+	// Set accelerometer DLPF to ~100Hz bandwidth
+	IMU_PORT->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_CONFIG2);
+	SPI_Transaction(IMU_SPI, 0x02);
+	IMU_PORT->BSRR |= IMU_NCS;
+}
+
+void getIMU() {
+	// Get X-axis acceleration
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_XOUT_H | 0x80);
+	accelX = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_XOUT_L | 0x80);
+	accelX |= SPI_Transaction(IMU_SPI, 0x00);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	// Get Y-axis acceleration
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_YOUT_H | 0x80);
+	accelY = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_YOUT_L | 0x80);
+	accelY |= SPI_Transaction(IMU_SPI, 0x00);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	// Get Z-axis acceleration
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_ZOUT_H | 0x80);
+	accelZ = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, ACCEL_ZOUT_L | 0x80);
+	accelZ |= SPI_Transaction(IMU_SPI, 0x00);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	// Get X-axis rotation
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_XOUT_H | 0x80);
+	gyroX = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_XOUT_L | 0x80);
+	gyroX |= SPI_Transaction(IMU_SPI, 0x00);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	// Get Y-axis rotation
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_YOUT_H | 0x80);
+	gyroY = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_YOUT_L | 0x80);
+	gyroY |= SPI_Transaction(IMU_SPI, 0x00);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	// Get Z-axis rotation
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_ZOUT_H | 0x80);
+	gyroZ = (SPI_Transaction(IMU_SPI, 0x00) << 8);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
+
+	GPIOA->BRR |= IMU_NCS;
+	SPI_Transaction(IMU_SPI, GYRO_ZOUT_L | 0x80);
+	gyroZ |= SPI_Transaction(IMU_SPI, 0x00);
+	GPIOA->BSRR |= IMU_NCS;
+	delay(100);
 }

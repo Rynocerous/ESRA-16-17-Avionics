@@ -143,8 +143,18 @@
 /* Public Variables */
 GPIO_InitTypeDef GPIO_InitStructure;
 SPI_InitTypeDef  SPI_InitStructure;
+uint16_t accelX;
+uint16_t accelY;
+uint16_t accelZ;
+uint16_t gyroX;
+uint16_t gyroY;
+uint16_t gyroZ;
+uint16_t magX;
+uint16_t magY;
+uint16_t magZ;
 
 /* Function Prototypes */
 void initIMU();
+void getIMU();
 
 #endif /* IMU_H_ */
