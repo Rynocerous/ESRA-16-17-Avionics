@@ -6,6 +6,7 @@
 #include "radio.h"
 #include "baro.h"
 #include "imu.h"
+#include "gps.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -25,13 +26,15 @@ int main(void)
 	initRadio();
 	initBaro();
 	initIMU();
+	initGPS();
 
 	while (1)
 	{
 		/* Blink LED for every loop */
 		toggleLED(LED_RED);
-		delay(1000000);
+//		delay(1000000);
 		toggleLED(LED_RED);
+//		delay(100000);
 
 //		if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
 //			mode = USART_ReceiveData(USART2);
@@ -50,6 +53,11 @@ int main(void)
 //		delay(200);
 //		USART_SendData(USART2, 0x0D);
 
+		/* GPS */
+		if (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET) {
+			USART_SendData(USART2, USART_ReceiveData(USART1));
+		}
+
 		/* BAROMETER */
 //		getBaroPres();
 //		getBaroTemp();
@@ -57,72 +65,37 @@ int main(void)
 //		printInt(baroP);
 
 		/* XYZ ACCELERATIONS */
-		USART_SendData(USART2, 0x58);
-		delay(2400);
-		USART_SendData(USART2, 0x3A);
-		delay(2400);
-		USART_SendData(USART2, 0x20);
-		delay(2400);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 59 | 0x80);
-		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 60 | 0x80);
-		data |= SPI_Transaction(IMU_SPI, 0x00);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		printInt(data);
-
-		USART_SendData(USART2, 0x59);
-		delay(2400);
-		USART_SendData(USART2, 0x3A);
-		delay(2400);
-		USART_SendData(USART2, 0x20);
-		delay(2400);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 61 | 0x80);
-		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 62 | 0x80);
-		data |= SPI_Transaction(IMU_SPI, 0x00);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		printInt(data);
-
-		USART_SendData(USART2, 0x5A);
-		delay(2400);
-		USART_SendData(USART2, 0x3A);
-		delay(2400);
-		USART_SendData(USART2, 0x20);
-		delay(2400);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 63 | 0x80);
-		data = (SPI_Transaction(IMU_SPI, 0x00) << 8);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		GPIOA->BRR |= IMU_NCS;
-		SPI_Transaction(IMU_SPI, 64 | 0x80);
-		data |= SPI_Transaction(IMU_SPI, 0x00);
-		GPIOA->BSRR |= IMU_NCS;
-		delay(100);
-
-		printInt(data);
-
-		USART_SendData(USART2, 0x0A);
-		delay(2400);
-		USART_SendData(USART2, 0x0D);
+//		getIMU();
+//		USART_SendData(USART2, 0x58);
+//		delay(2400);
+//		USART_SendData(USART2, 0x3A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x20);
+//		delay(2400);
+//
+//		printInt(accelX);
+//
+//		USART_SendData(USART2, 0x59);
+//		delay(2400);
+//		USART_SendData(USART2, 0x3A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x20);
+//		delay(2400);
+//
+//		printInt(accelY);
+//
+//		USART_SendData(USART2, 0x5A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x3A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x20);
+//		delay(2400);
+//
+//		printInt(accelZ);
+//
+//		USART_SendData(USART2, 0x0A);
+//		delay(2400);
+//		USART_SendData(USART2, 0x0D);
 
 
 //		/* CS TEAM INTEGRATION TEST */

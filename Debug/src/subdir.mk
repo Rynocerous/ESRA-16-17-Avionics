@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/baro.c \
+../src/gps.c \
 ../src/imu.c \
 ../src/led.c \
 ../src/main.c \
@@ -13,6 +14,7 @@ C_SRCS += \
 
 OBJS += \
 ./src/baro.o \
+./src/gps.o \
 ./src/imu.o \
 ./src/led.o \
 ./src/main.o \
@@ -21,6 +23,7 @@ OBJS += \
 
 C_DEPS += \
 ./src/baro.d \
+./src/gps.d \
 ./src/imu.d \
 ./src/led.d \
 ./src/main.d \

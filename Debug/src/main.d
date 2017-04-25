@@ -30,7 +30,8 @@ src/main.o: ../src/main.c \
  C:/Users/Ryan/workspace/avionics/inc/led.h \
  C:/Users/Ryan/workspace/avionics/inc/radio.h \
  C:/Users/Ryan/workspace/avionics/inc/baro.h \
- C:/Users/Ryan/workspace/avionics/inc/imu.h
+ C:/Users/Ryan/workspace/avionics/inc/imu.h \
+ C:/Users/Ryan/workspace/avionics/inc/gps.h
 
 C:/Users/Ryan/workspace/avionics/CMSIS/device/stm32f10x.h:
 
@@ -95,3 +96,5 @@ C:/Users/Ryan/workspace/avionics/inc/radio.h:
 C:/Users/Ryan/workspace/avionics/inc/baro.h:
 
 C:/Users/Ryan/workspace/avionics/inc/imu.h:
+
+C:/Users/Ryan/workspace/avionics/inc/gps.h:
