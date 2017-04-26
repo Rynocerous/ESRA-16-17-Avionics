@@ -52,6 +52,100 @@ void initGPS() {
 //	configureGPS(settingsArray);
 }
 
+void getGPS() {
+	uint8_t c[6];
+	uint8_t done = 0;
+	while (!done) { // Search for $GNGGA sentence
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		if (USART_ReceiveData(USART1) == '$') {
+			while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+			if (USART_ReceiveData(USART1) == 'G') {
+				while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+				if (USART_ReceiveData(USART1) == 'N') {
+					while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+					if (USART_ReceiveData(USART1) == 'G') {
+						while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+						if (USART_ReceiveData(USART1) == 'G') {
+							while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+							if (USART_ReceiveData(USART1) == 'A') {
+								done = 1;
+							}
+						}
+					}
+				}
+			}
+		}
+//		while (USART_ReceiveData(USART1) != '$');
+//		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+//		c[0] = USART_ReceiveData(USART1);
+////		USART_SendData(USART2, c[0]);
+//		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+//		c[1] = USART_ReceiveData(USART1);
+////		USART_SendData(USART2, c[1]);
+//		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+//		c[2] = USART_ReceiveData(USART1);
+////		USART_SendData(USART2, c[2]);
+//		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+//		c[3] = USART_ReceiveData(USART1);
+////		USART_SendData(USART2, c[3]);
+//		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+//		c[4] = USART_ReceiveData(USART1);
+//		//USART_SendData(USART2, c[4]);
+//		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+//		c[5] = USART_ReceiveData(USART1);
+//		//USART_SendData(USART2, c[5]);
+//		if ((c[5] == 'A') && (c[4] == 'G') && (c[3] == 'G')) {
+//			break; // GGA sentence match
+//		}
+	}
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard comma
+	gpsTime = 0;
+	for (uint8_t i = 0; i < 6; i++) {
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		gpsTime *= 10;
+		c[0] = USART_ReceiveData(USART1);
+		gpsTime += (c[0] - 48);
+//		USART_SendData(USART2, c[0]);
+	}
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard decimal
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard zero
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard zero
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard comma
+	gpsLat = 0;
+	for (uint8_t i = 0; i < 9; i++) {
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		c[0] = USART_ReceiveData(USART1);
+		if (i != 4) {
+			gpsLat *= 10;
+			gpsLat += (c[0] - 48);
+//			USART_SendData(USART2, c[0]);
+		}
+	}
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard final digit of Latitude
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard comma
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard N/S indicator
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	c[0] = USART_ReceiveData(USART1); // Discard comma
+	gpsLong = 0;
+	for (uint8_t i = 0; i < 10; i++) {
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		c[0] = USART_ReceiveData(USART1);
+		if (i != 5) {
+			gpsLong *= 10;
+			gpsLong += (c[0] - 48);
+//			USART_SendData(USART2, c[0]);
+		}
+	}
+}
+
 //void configureGPS(uint8_t *settingsArrayPointer) {
 //	uint8_t gpsSetSuccess = 0;
 ////	Serial.println("Configuring u-Blox GPS initial state...");

@@ -53,12 +53,17 @@
 //OFF = 0x00
 //ON  = 0x01
 //
-uint8_t settingsArray[] = {0x03, 0xFA, 0x00, 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+//uint8_t settingsArray[] = {0x03, 0xFA, 0x00, 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 /* Public Variables */
 GPIO_InitTypeDef GPIO_InitStructure;
 USART_InitTypeDef USART_InitStructure;
-uint8_t gpsStatus[] = {0, 0, 0, 0, 0, 0, 0};
+uint32_t gpsTime;
+uint32_t gpsLat;
+uint32_t gpsLong;
+uint32_t gpsAlt;
+
+//uint8_t gpsStatus[] = {0, 0, 0, 0, 0, 0, 0};
 unsigned long start;
 
 /* Function Prototypes */
