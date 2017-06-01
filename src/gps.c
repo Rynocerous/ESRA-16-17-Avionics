@@ -55,18 +55,43 @@ void initGPS() {
 void getGPS() {
 	uint8_t c[6];
 	uint8_t done = 0;
+	uint32_t timeout = 100000;
 	while (!done) { // Search for $GNGGA sentence
-		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+			timeout--;
+			if (timeout == 0) {return;}
+		}
+		timeout = 100000;
 		if (USART_ReceiveData(USART1) == '$') {
-			while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+			while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+				timeout--;
+				if (timeout == 0) {return;}
+			}
+			timeout = 100000;
 			if (USART_ReceiveData(USART1) == 'G') {
-				while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+				while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+					timeout--;
+					if (timeout == 0) {return;}
+				}
+				timeout = 100000;
 				if (USART_ReceiveData(USART1) == 'N') {
-					while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+					while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+						timeout--;
+						if (timeout == 0) {return;}
+					}
+					timeout = 100000;
 					if (USART_ReceiveData(USART1) == 'G') {
-						while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+						while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+							timeout--;
+							if (timeout == 0) {return;}
+						}
+						timeout = 100000;
 						if (USART_ReceiveData(USART1) == 'G') {
-							while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+							while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+								timeout--;
+								if (timeout == 0) {return;}
+							}
+							timeout = 100000;
 							if (USART_ReceiveData(USART1) == 'A') {
 								done = 1;
 							}
@@ -98,27 +123,55 @@ void getGPS() {
 //			break; // GGA sentence match
 //		}
 	}
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard comma
 	gpsTime = 0;
 	for (uint8_t i = 0; i < 6; i++) {
-		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+			timeout--;
+			if (timeout == 0) {return;}
+		}
+		timeout = 100000;
 		gpsTime *= 10;
 		c[0] = USART_ReceiveData(USART1);
 		gpsTime += (c[0] - 48);
 //		USART_SendData(USART2, c[0]);
 	}
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard decimal
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard zero
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard zero
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard comma
 	gpsLat = 0;
 	for (uint8_t i = 0; i < 9; i++) {
-		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+			timeout--;
+			if (timeout == 0) {return;}
+		}
+		timeout = 100000;
 		c[0] = USART_ReceiveData(USART1);
 		if (i != 4) {
 			gpsLat *= 10;
@@ -126,17 +179,37 @@ void getGPS() {
 //			USART_SendData(USART2, c[0]);
 		}
 	}
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard final digit of Latitude
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard comma
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard N/S indicator
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+		timeout--;
+		if (timeout == 0) {return;}
+	}
+	timeout = 100000;
 	c[0] = USART_ReceiveData(USART1); // Discard comma
 	gpsLong = 0;
 	for (uint8_t i = 0; i < 10; i++) {
-		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+		while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {
+			timeout--;
+			if (timeout == 0) {return;}
+		}
+		timeout = 100000;
 		c[0] = USART_ReceiveData(USART1);
 		if (i != 5) {
 			gpsLong *= 10;

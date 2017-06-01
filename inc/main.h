@@ -17,5 +17,6 @@ SPI_InitTypeDef  SPI_InitStructure;
 void delay(uint32_t);
 void printInt(uint32_t);
 uint8_t SPI_Transaction(SPI_TypeDef*, uint8_t);
+void updateRadio();
 
 #endif /* MAIN_H_ */

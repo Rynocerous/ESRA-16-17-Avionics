@@ -50,20 +50,29 @@ void initRadio() {
 }
 
 void printInt(uint32_t num) {
-	char buffer[10];
+	char buffer[10] = {0};
 	itoa(num, buffer, 10);
 
 	uint8_t i = 0;
+	uint8_t j = 10;
 	while (i < 10) {
 		if (buffer[i] > 47 && buffer[i] < 58) {
 			USART_SendData(RADIO_USART, buffer[i]);
 			delay(2400);
+			j--;
 		}
 		i++;
 	}
-
+	// Finish with TAB
+	while (j > 0) {
+		USART_SendData(RADIO_USART, 0x20);
+		j--;
+	}
+	// Finish with " "
+//	USART_SendData(RADIO_USART, 0x20);
+//	delay(2400);
 	// Finish with \n
-	USART_SendData(RADIO_USART, 0x0A);
-	delay(2400);
-	USART_SendData(RADIO_USART, 0x0D);
+//	USART_SendData(RADIO_USART, 0x0A);
+//	delay(2400);
+//	USART_SendData(RADIO_USART, 0x0D);
 }

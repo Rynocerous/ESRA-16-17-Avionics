@@ -36,10 +36,10 @@ int main(void)
 		toggleLED(LED_RED);
 //		delay(100000);
 
-//		if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
-//			mode = USART_ReceiveData(USART2);
-//		}
-//		delay(100000);
+		if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
+			mode = USART_ReceiveData(USART2);
+		}
+		delay(100000);
 
 		/* Loop until the USART2 Receive Data Register is not empty */
 		//while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET){}
@@ -106,6 +106,7 @@ int main(void)
 //		USART_SendData(USART2, 0x0D);
 
 
+		updateRadio();
 //		/* CS TEAM INTEGRATION TEST */
 //		/* 0x09 -> \t
 //		 * 0x53 -> 'S'
@@ -113,113 +114,150 @@ int main(void)
 //		 * 0x50 -> 'P'
 //		 * 0x0A -> \0
 //		 * 0x30 -> '0'
+//		 * 0x20 -> ' '
 //		 */
 //
 //		// Free run
 //		if (mode == 'f') {
 //			// Start new packet
-			USART_SendData(USART2, 0x53);
-			delay(2400);
-			USART_SendData(USART2, 0x4E);
-			delay(2400);
-			USART_SendData(USART2, 0x50);
-			delay(2400);
+//			USART_SendData(USART2, 0x53);
+//			delay(2400);
+//			USART_SendData(USART2, 0x4E);
+//			delay(2400);
+//			USART_SendData(USART2, 0x50);
+//			delay(2400);
+//			USART_SendData(USART2, 0x20);
+//			delay(2400);
 //
 //			// MPU-9250
 //			// Accelerometer
-			USART_SendData(USART2, (accelX >> 8) & 0xFF); // X
-			delay(2400);
-			USART_SendData(USART2, accelX & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (accelY >> 8) & 0xFF); // Y
-			delay(2400);
-			USART_SendData(USART2, accelY & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (accelZ >> 8) & 0xFF); // Z
-			delay(2400);
-			USART_SendData(USART2, accelZ & 0xFF);
-			delay(2400);
+//			printInt(accelX);
+//			delay(2400);
+//			printInt(accelY);
+//			delay(2400);
+//			printInt(accelZ);
+//			delay(2400);
+//			USART_SendData(USART2, (accelX >> 8) & 0xFF); // X
+//			delay(2400);
+//			USART_SendData(USART2, accelX & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (accelY >> 8) & 0xFF); // Y
+//			delay(2400);
+//			USART_SendData(USART2, accelY & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (accelZ >> 8) & 0xFF); // Z
+//			delay(2400);
+//			USART_SendData(USART2, accelZ & 0xFF);
+//			delay(2400);
 //			// Gyroscope
-			USART_SendData(USART2, (gyroX >> 8) & 0xFF); // X
-			delay(2400);
-			USART_SendData(USART2, gyroX & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (gyroY >> 8) & 0xFF); // Y
-			delay(2400);
-			USART_SendData(USART2, gyroY & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (gyroZ >> 8) & 0xFF); // Z
-			delay(2400);
-			USART_SendData(USART2, gyroZ & 0xFF);
-			delay(2400);
+//			printInt(gyroX);
+//			delay(2400);
+//			printInt(gyroY);
+//			delay(2400);
+//			printInt(gyroZ);
+//			delay(2400);
+//			USART_SendData(USART2, (gyroX >> 8) & 0xFF); // X
+//			delay(2400);
+//			USART_SendData(USART2, gyroX & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gyroY >> 8) & 0xFF); // Y
+//			delay(2400);
+//			USART_SendData(USART2, gyroY & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gyroZ >> 8) & 0xFF); // Z
+//			delay(2400);
+//			USART_SendData(USART2, gyroZ & 0xFF);
+//			delay(2400);
 //			// Magnetometer
-			USART_SendData(USART2, 0x00); // X
-			delay(2400);
-			USART_SendData(USART2, 0x01);
-			delay(2400);
-			USART_SendData(USART2, 0x00); // Y
-			delay(2400);
-			USART_SendData(USART2, 0x02);
-			delay(2400);
-			USART_SendData(USART2, 0x00); // Z
-			delay(2400);
-			USART_SendData(USART2, 0x04);
-			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00); // X
+//			delay(2400);
+//			USART_SendData(USART2, 0x01);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00); // Y
+//			delay(2400);
+//			USART_SendData(USART2, 0x02);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00); // Z
+//			delay(2400);
+//			USART_SendData(USART2, 0x04);
+//			delay(2400);
 //
 //			// H3LIS-200DL
 //			// Accelerometer
-			USART_SendData(USART2, 0x08); // X
-			delay(2400);
-			USART_SendData(USART2, 0x10); // Y
-			delay(2400);
-			USART_SendData(USART2, 0x20); // Z
-			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			USART_SendData(USART2, 0x08); // X
+//			delay(2400);
+//			USART_SendData(USART2, 0x10); // Y
+//			delay(2400);
+//			USART_SendData(USART2, 0x20); // Z
+//			delay(2400);
 //
 //			// MS5611
 //			// Barometric Pressure
-			USART_SendData(USART2, 0x00); // Padding byte for 32 bits
-			delay(2400);
-			USART_SendData(USART2, (baroP >> 16) & 0xFF );
-			delay(2400);
-			USART_SendData(USART2, (baroP >> 8) & 0xFF );
-			delay(2400);
-			USART_SendData(USART2, baroP & 0xFF);
-			delay(2400);
+//			printInt(baroP);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00); // Padding byte for 32 bits
+//			delay(2400);
+//			USART_SendData(USART2, (baroP >> 16) & 0xFF );
+//			delay(2400);
+//			USART_SendData(USART2, (baroP >> 8) & 0xFF );
+//			delay(2400);
+//			USART_SendData(USART2, baroP & 0xFF);
+//			delay(2400);
 //
 //			// MAX-M8
 //			// GPS
-			USART_SendData(USART2, (gpsLat >> 24) & 0xFF); // Lat
-			delay(2400);
-			USART_SendData(USART2, (gpsLat >> 16) & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (gpsLat >> 8) & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, gpsLat & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (gpsLong >> 24) & 0xFF); // Long
-			delay(2400);
-			USART_SendData(USART2, (gpsLong >> 16) & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (gpsLong >> 8) & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, gpsLong & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, 0x00); // Alt
-			delay(2400);
-			USART_SendData(USART2, 0x00);
-			delay(2400);
-			USART_SendData(USART2, 0x00);
-			delay(2400);
-			USART_SendData(USART2, 0x00);
-			delay(2400);
-			USART_SendData(USART2, (gpsTime >> 24) & 0xFF); // Time
-			delay(2400);
-			USART_SendData(USART2, (gpsTime >> 16) & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, (gpsTime >> 8) & 0xFF);
-			delay(2400);
-			USART_SendData(USART2, gpsTime & 0xFF);
-			delay(2400);
+//			printInt(gpsLat);
+//			delay(2400);
+//			printInt(gpsLong);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(gpsTime);
+//			delay(2400);
+//			USART_SendData(USART2, (gpsLat >> 24) & 0xFF); // Lat
+//			delay(2400);
+//			USART_SendData(USART2, (gpsLat >> 16) & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gpsLat >> 8) & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, gpsLat & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gpsLong >> 24) & 0xFF); // Long
+//			delay(2400);
+//			USART_SendData(USART2, (gpsLong >> 16) & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gpsLong >> 8) & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, gpsLong & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00); // Alt
+//			delay(2400);
+//			USART_SendData(USART2, 0x00);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00);
+//			delay(2400);
+//			USART_SendData(USART2, 0x00);
+//			delay(2400);
+//			USART_SendData(USART2, (gpsTime >> 24) & 0xFF); // Time
+//			delay(2400);
+//			USART_SendData(USART2, (gpsTime >> 16) & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gpsTime >> 8) & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, gpsTime & 0xFF);
+//			delay(2400);
 //		}
 //
 //		// Altitude
@@ -232,6 +270,50 @@ int main(void)
 //
 //		// IMU
 //		if (mode == 'i') {
+//			printInt(accelX);
+//			delay(2400);
+//			printInt(accelY);
+//			delay(2400);
+//			printInt(accelZ);
+//			delay(2400);
+//			USART_SendData(USART2, (accelX >> 8) & 0xFF); // X
+//			delay(2400);
+//			USART_SendData(USART2, accelX & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (accelY >> 8) & 0xFF); // Y
+//			delay(2400);
+//			USART_SendData(USART2, accelY & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (accelZ >> 8) & 0xFF); // Z
+//			delay(2400);
+//			USART_SendData(USART2, accelZ & 0xFF);
+//			delay(2400);
+//			// Gyroscope
+//			printInt(gyroX);
+//			delay(2400);
+//			printInt(gyroY);
+//			delay(2400);
+//			printInt(gyroZ);
+//			delay(2400);
+//			USART_SendData(USART2, (gyroX >> 8) & 0xFF); // X
+//			delay(2400);
+//			USART_SendData(USART2, gyroX & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gyroY >> 8) & 0xFF); // Y
+//			delay(2400);
+//			USART_SendData(USART2, gyroY & 0xFF);
+//			delay(2400);
+//			USART_SendData(USART2, (gyroZ >> 8) & 0xFF); // Z
+//			delay(2400);
+//			USART_SendData(USART2, gyroZ & 0xFF);
+//			delay(2400);
+//			// Magnetometer
+//			printInt(0);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
 //			USART_SendData(USART2, 0x30);
 //			delay(2400);
 //			USART_SendData(USART2, 0x0A);
@@ -274,6 +356,14 @@ int main(void)
 //
 //		// GPS
 //		if (mode == 'g') {
+//			printInt(gpsLat);
+//			delay(2400);
+//			printInt(gpsLong);
+//			delay(2400);
+//			printInt(0);
+//			delay(2400);
+//			printInt(gpsTime);
+//			delay(2400);
 //			USART_SendData(USART2, 0x30);
 //			delay(2400);
 //			USART_SendData(USART2, 0x0A);
@@ -293,6 +383,10 @@ int main(void)
 //			USART_SendData(USART2, 0x0A);
 //			delay(2400);
 //		}
+		// Finish with \n
+//		USART_SendData(RADIO_USART, 0x0A);
+//		delay(2400);
+//		USART_SendData(RADIO_USART, 0x0D);
 	}
 }
 
@@ -307,6 +401,112 @@ uint8_t SPI_Transaction(SPI_TypeDef* SPIx, uint8_t write) {
 	SPI_I2S_SendData(SPIx, write);
 	while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
 	return (uint8_t) SPI_I2S_ReceiveData(SPIx);
+}
+
+void updateRadio() {
+	// Send "SNP"
+	USART_SendData(USART2, 0x53);
+	delay(2400);
+	USART_SendData(USART2, 0x4E);
+	delay(2400);
+	USART_SendData(USART2, 0x50);
+	delay(2400);
+
+	// MPU-9250
+	// Accelerometer
+	USART_SendData(USART2, (accelX >> 8) & 0xFF); // X
+	delay(2400);
+	USART_SendData(USART2, accelX & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (accelY >> 8) & 0xFF); // Y
+	delay(2400);
+	USART_SendData(USART2, accelY & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (accelZ >> 8) & 0xFF); // Z
+	delay(2400);
+	USART_SendData(USART2, accelZ & 0xFF);
+	delay(2400);
+	// Gyroscope
+	USART_SendData(USART2, (gyroX >> 8) & 0xFF); // X
+	delay(2400);
+	USART_SendData(USART2, gyroX & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (gyroY >> 8) & 0xFF); // Y
+	delay(2400);
+	USART_SendData(USART2, gyroY & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (gyroZ >> 8) & 0xFF); // Z
+	delay(2400);
+	USART_SendData(USART2, gyroZ & 0xFF);
+	delay(2400);
+	// Magnetometer
+	USART_SendData(USART2, 0x00); // X
+	delay(2400);
+	USART_SendData(USART2, 0x00);
+	delay(2400);
+	USART_SendData(USART2, 0x00); // Y
+	delay(2400);
+	USART_SendData(USART2, 0x00);
+	delay(2400);
+	USART_SendData(USART2, 0x00); // Z
+	delay(2400);
+	USART_SendData(USART2, 0x00);
+	delay(2400);
+
+	// H3LIS-200DL
+	// Accelerometer
+	USART_SendData(USART2, 0x00); // X
+	delay(2400);
+	USART_SendData(USART2, 0x00); // Y
+	delay(2400);
+	USART_SendData(USART2, 0x00); // Z
+	delay(2400);
+
+	// MS5611
+	// Barometric Pressure
+	USART_SendData(USART2, 0x00); // Padding byte for 32 bits
+	delay(2400);
+	USART_SendData(USART2, (baroP >> 16) & 0xFF );
+	delay(2400);
+	USART_SendData(USART2, (baroP >> 8) & 0xFF );
+	delay(2400);
+	USART_SendData(USART2, baroP & 0xFF);
+	delay(2400);
+
+	// MAX-M8
+	// GPS
+	USART_SendData(USART2, (gpsLat >> 24) & 0xFF); // Lat
+	delay(2400);
+	USART_SendData(USART2, (gpsLat >> 16) & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (gpsLat >> 8) & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, gpsLat & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (gpsLong >> 24) & 0xFF); // Long
+	delay(2400);
+	USART_SendData(USART2, (gpsLong >> 16) & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (gpsLong >> 8) & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, gpsLong & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, 0x00); // Alt
+	delay(2400);
+	USART_SendData(USART2, 0x00);
+	delay(2400);
+	USART_SendData(USART2, 0x00);
+	delay(2400);
+	USART_SendData(USART2, 0x00);
+	delay(2400);
+	USART_SendData(USART2, (gpsTime >> 24) & 0xFF); // Time
+	delay(2400);
+	USART_SendData(USART2, (gpsTime >> 16) & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, (gpsTime >> 8) & 0xFF);
+	delay(2400);
+	USART_SendData(USART2, gpsTime & 0xFF);
+	delay(2400);
 }
 
 #ifdef  USE_FULL_ASSERT
